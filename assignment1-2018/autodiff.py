@@ -350,12 +350,16 @@ def gradients(output_node, node_list):
         # sum_grads = sum(node_to_output_grads_list[node])
 
         # method 2 (not create new Node for one grad)
-        sum_grads = None
-        for grad in node_to_output_grads_list[node]:
-            if sum_grads is None:
-                sum_grads = grad
-            else:
-                sum_grads = sum_grads + grad
+        # sum_grads = None
+        # for grad in node_to_output_grads_list[node]:
+        #     if sum_grads is None:
+        #         sum_grads = grad
+        #     else:
+        #         sum_grads = sum_grads + grad
+
+        # method 3 (use sum_node_list func)
+        sum_grads = sum_node_list(node_to_output_grads_list[node])
+        # print('node: {0}, sum_grads: {1}'.format(node_to_output_grads_list[node], sum_grads))
 
         # save node grad only for node list
         if node in node_list:
