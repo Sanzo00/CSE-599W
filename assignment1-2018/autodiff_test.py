@@ -189,3 +189,36 @@ def test_matmul_two_vars():
     assert np.array_equal(y_val, expected_yval)
     assert np.array_equal(grad_x2_val, expected_grad_x2_val)
     assert np.array_equal(grad_x3_val, expected_grad_x3_val)
+    
+if __name__ == '__main__':
+    print("\n####################### test_identity #####################")
+    test_identity()
+    
+    print("\n###################### test_add_by_const #####################")
+    test_add_by_const()
+
+    print("\n###################### test_mul_by_const #####################")
+    test_mul_by_const()
+
+    print("\n###################### test_add_two_vars #####################")
+    test_add_two_vars()
+
+    print("\n###################### test_mul_two_vars #####################")
+    test_mul_two_vars()
+
+    print("\n###################### test_add_mul_mix_1 #####################")
+    test_add_mul_mix_1()
+
+    print("\n###################### test_add_mul_mix_2 #####################")
+    test_add_mul_mix_2()
+
+    print("\n###################### test_add_mul_mix_3 #####################")
+    test_add_mul_mix_3()
+    
+    print("\n###################### test_grad_of_grad #####################")
+    test_grad_of_grad()
+    
+    print("\n###################### test_matmul_two_vars #####################")
+    test_matmul_two_vars()
+
+    print("\nPassed all the test!!!")
