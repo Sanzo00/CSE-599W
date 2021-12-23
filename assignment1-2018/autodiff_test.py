@@ -190,35 +190,108 @@ def test_matmul_two_vars():
     assert np.array_equal(grad_x2_val, expected_grad_x2_val)
     assert np.array_equal(grad_x3_val, expected_grad_x3_val)
     
+
+def test_neg():
+    x2 = ad.Variable(name = "x2")
+    y = -x2
+
+    grad_x2, = ad.gradients(y, [x2])
+
+    executor = ad.Executor([y, grad_x2])
+    x2_val = 3 * np.ones(3)
+    y_val, grad_x2 = executor.run(feed_dict = {x2: x2_val})
+
+    assert isinstance(y, ad.Node)
+    assert np.array_equal(y_val, -x2_val)
+    assert np.array_equal(grad_x2, -np.ones_like(x2_val))
+
+def test_sub_by_const():
+    x2 = ad.Variable(name = "x2")
+    y = x2 - 2
+
+    grad_x2, = ad.gradients(y, [x2])
+    
+    executor = ad.Executor([y, grad_x2])
+    x2_val = 5 * np.ones(3)
+    y_val, grad_x2_val = executor.run(feed_dict = {x2: x2_val})
+
+    assert isinstance(y, ad.Node)
+    assert np.array_equal(y_val, x2_val - 2)
+    assert np.array_equal(grad_x2_val, np.ones_like(x2_val))
+
+def test_rsub_by_const():
+    x2 = ad.Variable(name = 'x2')
+    y = 2 - x2
+
+    grad_x2, = ad.gradients(y, [x2])
+    
+    executor = ad.Executor([y, grad_x2])
+    x2_val = 5 * np.ones(3)
+    y_val, grad_x2_val = executor.run(feed_dict = {x2: x2_val})
+
+    assert isinstance(y, ad.Node)
+    assert np.array_equal(y_val, 2 - x2_val)
+    assert np.array_equal(grad_x2_val, -np.ones_like(x2_val))
+
+def test_sub_two_vars():
+    x2 = ad.Variable(name = 'x2')
+    x3 = ad.Variable(name = 'x3')
+    y = x2 - x3
+
+    grad_x2, grad_x3 = ad.gradients(y, [x2, x3])
+
+    executor = ad.Executor([y, grad_x2, grad_x3])
+    x2_val = 5 * np.ones(3)
+    x3_val = 2 * np.ones(3)
+    y_val, grad_x2_val, grad_x3_val = executor.run(feed_dict = {x2: x2_val, x3: x3_val})
+
+    assert isinstance(y, ad.Node)
+    assert np.array_equal(y_val, x2_val - x3_val)
+    assert np.array_equal(grad_x2_val, np.ones_like(x2_val))
+    assert np.array_equal(grad_x3_val, -np.ones_like(x3_val))
+
 if __name__ == '__main__':
-    print("\n####################### test_identity #####################")
-    test_identity()
+    # print("\n####################### test_identity #####################")
+    # test_identity()
     
-    print("\n###################### test_add_by_const #####################")
-    test_add_by_const()
+    # print("\n###################### test_add_by_const #####################")
+    # test_add_by_const()
 
-    print("\n###################### test_mul_by_const #####################")
-    test_mul_by_const()
+    # print("\n###################### test_mul_by_const #####################")
+    # test_mul_by_const()
 
-    print("\n###################### test_add_two_vars #####################")
-    test_add_two_vars()
+    # print("\n###################### test_add_two_vars #####################")
+    # test_add_two_vars()
 
-    print("\n###################### test_mul_two_vars #####################")
-    test_mul_two_vars()
+    # print("\n###################### test_mul_two_vars #####################")
+    # test_mul_two_vars()
 
-    print("\n###################### test_add_mul_mix_1 #####################")
-    test_add_mul_mix_1()
+    # print("\n###################### test_add_mul_mix_1 #####################")
+    # test_add_mul_mix_1()
 
-    print("\n###################### test_add_mul_mix_2 #####################")
-    test_add_mul_mix_2()
+    # print("\n###################### test_add_mul_mix_2 #####################")
+    # test_add_mul_mix_2()
 
-    print("\n###################### test_add_mul_mix_3 #####################")
-    test_add_mul_mix_3()
+    # print("\n###################### test_add_mul_mix_3 #####################")
+    # test_add_mul_mix_3()
     
-    print("\n###################### test_grad_of_grad #####################")
-    test_grad_of_grad()
+    # print("\n###################### test_grad_of_grad #####################")
+    # test_grad_of_grad()
     
-    print("\n###################### test_matmul_two_vars #####################")
-    test_matmul_two_vars()
+    # print("\n###################### test_matmul_two_vars #####################")
+    # test_matmul_two_vars()
+
+    print("\n###################### test_neg #####################")
+    test_neg()
+
+    print("\n###################### test_sub_by_const #####################")
+    test_sub_by_const()
+
+    print("\n###################### test_rsub_by_const #####################")
+    test_rsub_by_const()
+
+    print("\n###################### test_sub_two_vars #####################")
+    test_sub_two_vars()
+
 
     print("\nPassed all the test!!!")

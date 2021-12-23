@@ -37,6 +37,24 @@ class Node(object):
             new_node = mul_byconst_op(self, other)
         return new_node
 
+    def __neg__(self):
+        new_node = neg_op(self)
+        return new_node
+
+    def __sub__(self, other):
+        if isinstance(other, Node):
+            new_node = sub_op(self, other)
+        else:
+            new_node = sub_byconst_op(self, other)
+        return new_node
+
+    def __rsub__(self, other):
+        if isinstance(other, Node):
+            raise NotImplementedError
+        else:
+            new_node = rsub_byconst_op(self, other)
+        return new_node
+
     # Allow left-hand-side add and multiply.
     __radd__ = __add__
     __rmul__ = __mul__
@@ -170,6 +188,66 @@ class MulByConstOp(Op):
         """TODO: Your code here"""
         return [output_grad * node.const_attr]
 
+class NegOp(Op):
+    def __call__(self, node_A):
+        new_node = Op.__call__(self)
+        new_node.inputs = [node_A]
+        new_node.name = '(-%s)' % node_A.name
+        return new_node
+    
+    def compute(self, node, input_vals):
+        assert(len(input_vals) == 1)
+        return -1 * input_vals[0]
+
+    def gradient(self, node, output_grad):
+        return [-output_grad]
+
+class SubOp(Op):
+    """Op to sub two nodes."""
+    def __call__(self, node_A, node_B):
+        new_node = Op.__call__(self)
+        new_node.inputs = [node_A, node_B]
+        new_node.name = "(%s-%s)" % (node_A.name, node_B.name)
+        return new_node
+
+    def compute(self, node, input_vals):
+        assert(len(input_vals) == 2)
+        return input_vals[0] - input_vals[1]
+
+    def gradient(self, node, output_grad):
+        return [output_grad, -output_grad]
+
+class SubByConstOp(Op):
+    """Op to element-wise substract a node by a constant."""
+    def __call__(self, node_A, const_val):
+        new_node = Op.__call__(self)
+        new_node.inputs = [node_A]
+        new_node.const_attr = const_val
+        new_node.name = "(%s-%s)" % (node_A.name, str(const_val))
+        return new_node
+
+    def compute(self, node, input_vals):
+        assert(len(input_vals) == 1)
+        return input_vals[0] - node.const_attr
+    
+    def gradient(self, node, output_grad):
+        return [output_grad]
+
+class RSubByConstOp(Op):
+    def __call__(self, node_A, const_val):
+        new_node = Op.__call__(self)
+        new_node.inputs = [node_A]
+        new_node.const_attr = const_val
+        new_node.name = "(%s-%s)" % (const_val, node_A.name)
+        return new_node
+
+    def compute(self, node, input_vals):
+        assert(len(input_vals) == 1)
+        return node.const_attr - input_vals[0]
+
+    def gradient(self, node, output_grad):
+        return [-output_grad]
+
 class MatMulOp(Op):
     """Op to matrix multiply two nodes."""
     def __call__(self, node_A, node_B, trans_A=False, trans_B=False):
@@ -269,6 +347,10 @@ matmul_op = MatMulOp()
 placeholder_op = PlaceholderOp()
 oneslike_op = OnesLikeOp()
 zeroslike_op = ZerosLikeOp()
+neg_op = NegOp()
+sub_op = SubOp()
+sub_byconst_op = SubByConstOp()
+rsub_byconst_op = RSubByConstOp()
 
 class Executor:
     """Executor computes values for a given subset of nodes in a computation graph.""" 
@@ -342,7 +424,7 @@ def gradients(output_node, node_list):
     # Traverse graph in reverse topological order given the output_node that we are taking gradient wrt.
     reverse_topo_order = reversed(find_topo_sort([output_node]))
 
-    print('output_node', output_node, node_to_output_grads_list[output_node])
+    print('output_node: {0}, grad: {1}, node_list: {2}'.format(output_node, node_to_output_grads_list[output_node][0], node_list))
     print('reverse_topo_order', *reversed(find_topo_sort([output_node])))
     """TODO: Your code here"""
     for node in reverse_topo_order:
@@ -359,15 +441,15 @@ def gradients(output_node, node_list):
 
         # method 3 (use sum_node_list func)
         sum_grads = sum_node_list(node_to_output_grads_list[node])
-        # print('node: {0}, sum_grads: {1}'.format(node_to_output_grads_list[node], sum_grads))
+        # print('node: {0}, sum_grads: {1}'.format(node, sum_grads))
 
         # save node grad only for node list
         if node in node_list:
             node_to_output_grad[node] = sum_grads
         if isinstance(node.op, PlaceholderOp):
             continue
-        compute_grad = node.op.gradient(node, sum_grads)
         print('compute_grad', node)
+        compute_grad = node.op.gradient(node, sum_grads)
         for node_in, node_grad in zip(node.inputs, compute_grad):
             if node_in not in node_to_output_grads_list:
                 node_to_output_grads_list[node_in] = []
