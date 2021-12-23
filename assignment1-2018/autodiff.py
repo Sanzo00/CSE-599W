@@ -483,7 +483,7 @@ class Executor:
                 continue
             input_vals = [node_to_val_map[node_in] for node_in in node.inputs]
             node_result = node.op.compute(node, input_vals)
-            node_to_val_map[node] = node_result
+            node_to_val_map[node] = node_result if isinstance(node_result, np.ndarray) else np.array(node_result)
             print('node: {0}, input_vals: {1}, node_result: {2}'.format(node, input_vals, node_result))
 
         # Collect node values.
