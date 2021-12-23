@@ -322,6 +322,20 @@ class LnOp(Op):
         # Y = log(A) dA = dY / A
         return [output_grad / node.inputs[0]]
 
+class ExpOp(Op):
+    def __call__(self, node_A):
+        new_node = Op.__call__(self)
+        new_node.name = "exp(%s)" % node_A.name
+        new_node.inputs = [node_A]
+        return new_node
+
+    def compute(self, node, input_vals):
+        assert(len(input_vals) == 1)
+        return np.exp(input_vals[0])
+
+    def gradient(self, node, output_grad):
+        return [output_grad * exp_op(node.inputs[0])]
+
 class MatMulOp(Op):
     """Op to matrix multiply two nodes."""
     def __call__(self, node_A, node_B, trans_A=False, trans_B=False):
@@ -429,6 +443,7 @@ truediv_op = TruedivOp()
 truediv_byconst_op = TruedivByConstOp()
 rtruediv_byconst_op = RTruedivByConstOp()
 ln_op = LnOp()
+exp_op = ExpOp()
 
 class Executor:
     """Executor computes values for a given subset of nodes in a computation graph.""" 

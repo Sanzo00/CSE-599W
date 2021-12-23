@@ -310,6 +310,20 @@ def test_ln_op():
     assert np.array_equal(y_val, np.log(x2_val))
     assert np.array_equal(grad_x2_val, 1 / x2_val)
 
+def test_exp_op():
+    x2 = ad.Variable("x2")
+    y = ad.exp_op(-x2)
+
+    grad_x2, = ad.gradients(y, [x2])
+    
+    executor = ad.Executor([y, grad_x2])
+    x2_val = np.array([2])
+    y_val, grad_x2_val = executor.run(feed_dict = {x2: x2_val})
+
+    assert isinstance(y, ad.Node)
+    assert np.array_equal(y_val, np.exp(-x2_val))
+    assert np.array_equal(grad_x2_val, np.ones_like(x2_val) * - np.exp(-x2_val))
+
 if __name__ == '__main__':
     # print("\n####################### test_identity #####################")
     # test_identity()
@@ -353,17 +367,19 @@ if __name__ == '__main__':
     # print("\n###################### test_sub_two_vars #####################")
     # test_sub_two_vars()
 
-    print("\n###################### test_truediv_by_const #####################")
-    test_truediv_by_const()
+    # print("\n###################### test_truediv_by_const #####################")
+    # test_truediv_by_const()
 
-    print("\n###################### test_truediv_two_vars #####################")
-    test_truediv_two_vars()
+    # print("\n###################### test_truediv_two_vars #####################")
+    # test_truediv_two_vars()
 
-    print("\n###################### test_rtruediv_by_const #####################")
-    test_rtruediv_by_const()
+    # print("\n###################### test_rtruediv_by_const #####################")
+    # test_rtruediv_by_const()
 
-    print("\n###################### test_ln_op #####################")
-    test_ln_op()
+    # print("\n###################### test_ln_op #####################")
+    # test_ln_op()
 
+    print("\n###################### test_exp_op #####################")
+    test_exp_op()
 
     print("\nPassed all the test!!!")
