@@ -336,6 +336,20 @@ class ExpOp(Op):
     def gradient(self, node, output_grad):
         return [output_grad * exp_op(node.inputs[0])]
 
+class ReduceSumOp(Op):
+    def __call__(self, node_A):
+        new_node = Op.__call__(self)
+        new_node.name = "reduce_sum(%s)" % node_A.name
+        new_node.inputs = [node_A]
+        return new_node
+
+    def compute(self, node, input_vals):
+        assert(len(input_vals) == 1)
+        return np.sum(input_vals[0])
+
+    def gradient(self, node, output_grad):
+        return [output_grad * oneslike_op(node.inputs[0])]
+
 class MatMulOp(Op):
     """Op to matrix multiply two nodes."""
     def __call__(self, node_A, node_B, trans_A=False, trans_B=False):
@@ -444,6 +458,7 @@ truediv_byconst_op = TruedivByConstOp()
 rtruediv_byconst_op = RTruedivByConstOp()
 ln_op = LnOp()
 exp_op = ExpOp()
+reduce_sum_op = ReduceSumOp()
 
 class Executor:
     """Executor computes values for a given subset of nodes in a computation graph.""" 

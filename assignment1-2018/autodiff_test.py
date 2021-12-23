@@ -324,6 +324,20 @@ def test_exp_op():
     assert np.array_equal(y_val, np.exp(-x2_val))
     assert np.array_equal(grad_x2_val, np.ones_like(x2_val) * - np.exp(-x2_val))
 
+def test_reduce_sum_op():
+    x2 = ad.Variable("x2")
+    y = ad.reduce_sum_op(x2)
+
+    grad_x2, = ad.gradients(y, [x2])
+    
+    executor = ad.Executor([y, grad_x2])
+    x2_val = 2 * np.ones(3)
+    y_val, grad_x2_val = executor.run(feed_dict = {x2: x2_val})
+
+    assert isinstance(y, ad.Node)
+    assert np.array_equal(y_val, np.sum(x2_val))
+    assert np.array_equal(grad_x2_val, np.ones_like(x2_val))
+
 if __name__ == '__main__':
     # print("\n####################### test_identity #####################")
     # test_identity()
@@ -379,7 +393,10 @@ if __name__ == '__main__':
     # print("\n###################### test_ln_op #####################")
     # test_ln_op()
 
-    print("\n###################### test_exp_op #####################")
-    test_exp_op()
+    # print("\n###################### test_exp_op #####################")
+    # test_exp_op()
+
+    print("\n###################### test_reduce_sum_op #####################")
+    test_reduce_sum_op()
 
     print("\nPassed all the test!!!")
