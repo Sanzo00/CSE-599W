@@ -250,6 +250,66 @@ def test_sub_two_vars():
     assert np.array_equal(grad_x2_val, np.ones_like(x2_val))
     assert np.array_equal(grad_x3_val, -np.ones_like(x3_val))
 
+def test_truediv_by_const():
+    x2 = ad.Variable(name = "x2")
+    y = x2 / 5
+
+    grad_x2, = ad.gradients(y, [x2])
+    
+    executor = ad.Executor([y, grad_x2])
+    x2_val = np.ones(3)
+    y_val, grad_x2_val = executor.run(feed_dict = {x2: x2_val})
+
+    assert isinstance(y, ad.Node)
+    assert np.array_equal(y_val, x2_val / 5)
+    assert np.array_equal(grad_x2_val, np.ones_like(x2_val) / 5)
+
+def test_truediv_two_vars():
+    x2 = ad.Variable(name = "x2")
+    x3 = ad.Variable(name = "x3")
+    y = x2 / x3
+
+    grad_x2, grad_x3 = ad.gradients(y, [x2, x3])
+    
+    print("debug:", grad_x2, grad_x3)
+    executor = ad.Executor([y, grad_x2, grad_x3])
+    x2_val = np.ones(3)
+    x3_val = 5 * np.ones(3)
+    y_val, grad_x2_val, grad_x3_val = executor.run(feed_dict = {x2: x2_val, x3: x3_val})
+
+    assert isinstance(y, ad.Node)
+    assert np.array_equal(y_val, x2_val / x3_val)
+    assert np.array_equal(grad_x2_val, np.ones_like(x2_val) / x3_val)
+    assert np.array_equal(grad_x3_val, np.ones_like(x2_val) * -x2_val / x3_val / x3_val)
+
+def test_rtruediv_by_const():
+    x2 = ad.Variable(name = "x2")
+    y = 5 / x2
+
+    grad_x2, = ad.gradients(y, [x2])
+    
+    executor = ad.Executor([y, grad_x2])
+    x2_val = np.ones(3)
+    y_val, grad_x2_val = executor.run(feed_dict = {x2: x2_val})
+
+    assert isinstance(y, ad.Node)
+    assert np.array_equal(y_val, 5 / x2_val)
+    assert np.array_equal(grad_x2_val, np.ones_like(x2_val) * -5 / x2_val / x2_val)
+
+def test_ln_op():
+    x2 = ad.Variable("x2")
+    y = ad.ln_op(x2)
+
+    grad_x2, = ad.gradients(y, [x2])
+
+    executor = ad.Executor([y, grad_x2])
+    x2_val = np.array([100])
+    y_val, grad_x2_val = executor.run(feed_dict = {x2: x2_val})
+
+    assert isinstance(y, ad.Node)
+    assert np.array_equal(y_val, np.log(x2_val))
+    assert np.array_equal(grad_x2_val, 1 / x2_val)
+
 if __name__ == '__main__':
     # print("\n####################### test_identity #####################")
     # test_identity()
@@ -281,17 +341,29 @@ if __name__ == '__main__':
     # print("\n###################### test_matmul_two_vars #####################")
     # test_matmul_two_vars()
 
-    print("\n###################### test_neg #####################")
-    test_neg()
+    # print("\n###################### test_neg #####################")
+    # test_neg()
 
-    print("\n###################### test_sub_by_const #####################")
-    test_sub_by_const()
+    # print("\n###################### test_sub_by_const #####################")
+    # test_sub_by_const()
 
-    print("\n###################### test_rsub_by_const #####################")
-    test_rsub_by_const()
+    # print("\n###################### test_rsub_by_const #####################")
+    # test_rsub_by_const()
 
-    print("\n###################### test_sub_two_vars #####################")
-    test_sub_two_vars()
+    # print("\n###################### test_sub_two_vars #####################")
+    # test_sub_two_vars()
+
+    print("\n###################### test_truediv_by_const #####################")
+    test_truediv_by_const()
+
+    print("\n###################### test_truediv_two_vars #####################")
+    test_truediv_two_vars()
+
+    print("\n###################### test_rtruediv_by_const #####################")
+    test_rtruediv_by_const()
+
+    print("\n###################### test_ln_op #####################")
+    test_ln_op()
 
 
     print("\nPassed all the test!!!")

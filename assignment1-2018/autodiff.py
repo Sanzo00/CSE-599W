@@ -55,6 +55,20 @@ class Node(object):
             new_node = rsub_byconst_op(self, other)
         return new_node
 
+    def __truediv__(self, other):
+        if isinstance(other, Node):
+            new_node = truediv_op(self, other)
+        else:
+            new_node = truediv_byconst_op(self, other)
+        return new_node
+
+    def __rtruediv__(self, other):
+        if isinstance(other, Node):
+            raise NotImplementedError # don't happend!
+        else:
+            new_node = rtruediv_byconst_op(self, other)
+        return new_node
+
     # Allow left-hand-side add and multiply.
     __radd__ = __add__
     __rmul__ = __mul__
@@ -248,6 +262,66 @@ class RSubByConstOp(Op):
     def gradient(self, node, output_grad):
         return [-output_grad]
 
+class TruedivOp(Op):
+    def __call__(self, node_A, node_B):
+        new_node = Op.__call__(self)
+        new_node.name = "(%s/%s)" % (node_A.name, node_B.name)
+        new_node.inputs = [node_A, node_B]
+        return new_node
+    
+    def compute(self, node, input_vals):
+        assert(len(input_vals) == 2)
+        return input_vals[0] / input_vals[1]
+    
+    def gradient(self, node, output_grad):
+        return [output_grad / node.inputs[1], -node.inputs[0] / node.inputs[1] / node.inputs[1]]
+
+class TruedivByConstOp(Op):
+    def __call__(self, node_A, const_val):
+        new_node = Op.__call__(self)
+        new_node.name = "(%s/%s)" % (node_A.name, str(const_val))
+        new_node.inputs = [node_A]
+        new_node.const_attr = const_val
+        return new_node
+    
+    def compute(self, node, input_vals):
+        assert(len(input_vals) == 1)
+        return input_vals[0] / node.const_attr
+    
+    def gradient(self, node, output_grad):
+        return [output_grad / node.const_attr]
+
+class RTruedivByConstOp(Op):
+    def __call__(self, node_A, const_val):
+        new_node = Op.__call__(self)
+        new_node.name = "(%s/%s)" % (const_val, node_A.name)
+        new_node.inputs = [node_A]
+        new_node.const_attr = const_val
+        return new_node
+    
+    def compute(self, node, input_vals):
+        assert(len(input_vals) == 1)
+        return node.const_attr / input_vals[0]
+    
+    def gradient(self, node, output_grad):
+        return [-node.const_attr / output_grad / output_grad]
+
+class LnOp(Op):
+    """Op to ln one node."""
+    def __call__(self, node_A):
+        new_node = Op.__call__(self)
+        new_node.inputs = [node_A]
+        new_node.name = "Ln(%s)" % (node_A.name)
+        return new_node
+
+    def compute(self, node, input_vals):
+        assert(len(input_vals) == 1)
+        return np.log(input_vals[0])
+
+    def gradient(self, node, output_grad):
+        # Y = log(A) dA = dY / A
+        return [output_grad / node.inputs[0]]
+
 class MatMulOp(Op):
     """Op to matrix multiply two nodes."""
     def __call__(self, node_A, node_B, trans_A=False, trans_B=False):
@@ -351,6 +425,10 @@ neg_op = NegOp()
 sub_op = SubOp()
 sub_byconst_op = SubByConstOp()
 rsub_byconst_op = RSubByConstOp()
+truediv_op = TruedivOp()
+truediv_byconst_op = TruedivByConstOp()
+rtruediv_byconst_op = RTruedivByConstOp()
+ln_op = LnOp()
 
 class Executor:
     """Executor computes values for a given subset of nodes in a computation graph.""" 
@@ -384,15 +462,14 @@ class Executor:
             print('node: {0} inputs: {1}'.format(node, node.inputs))
 
         """TODO: Your code here"""
-        print("######## run compute graph ########")
+        print("######## execute compute graph ########")
         for node in topo_order:
             if isinstance(node.op, PlaceholderOp):
                 continue
             input_vals = [node_to_val_map[node_in] for node_in in node.inputs]
             node_result = node.op.compute(node, input_vals)
             node_to_val_map[node] = node_result
-            print('run', node, input_vals, node_result)
-
+            print('node: {0}, input_vals: {1}, node_result: {2}'.format(node, input_vals, node_result))
 
         # Collect node values.
         node_val_results = [node_to_val_map[node] for node in self.eval_node_list]
