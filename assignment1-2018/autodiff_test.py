@@ -250,7 +250,7 @@ def test_sub_two_vars():
     assert np.array_equal(grad_x2_val, np.ones_like(x2_val))
     assert np.array_equal(grad_x3_val, -np.ones_like(x3_val))
 
-def test_truediv_by_const():
+def test_div_by_const():
     x2 = ad.Variable(name = "x2")
     y = x2 / 5
 
@@ -264,7 +264,7 @@ def test_truediv_by_const():
     assert np.array_equal(y_val, x2_val / 5)
     assert np.array_equal(grad_x2_val, np.ones_like(x2_val) / 5)
 
-def test_truediv_two_vars():
+def test_div_two_vars():
     x2 = ad.Variable(name = "x2")
     x3 = ad.Variable(name = "x3")
     y = x2 / x3
@@ -281,7 +281,7 @@ def test_truediv_two_vars():
     assert np.array_equal(grad_x2_val, np.ones_like(x2_val) / x3_val)
     assert np.array_equal(grad_x3_val, np.ones_like(x2_val) * -x2_val / x3_val / x3_val)
 
-def test_rtruediv_by_const():
+def test_rdiv_by_const():
     x2 = ad.Variable(name = "x2")
     y = 5 / x2
 
@@ -398,25 +398,25 @@ if __name__ == '__main__':
     # print("\n###################### test_sub_two_vars #####################")
     # test_sub_two_vars()
 
-    # print("\n###################### test_truediv_by_const #####################")
-    # test_truediv_by_const()
+    print("\n###################### test_div_by_const #####################")
+    test_div_by_const()
 
-    # print("\n###################### test_truediv_two_vars #####################")
-    # test_truediv_two_vars()
+    print("\n###################### test_div_two_vars #####################")
+    test_div_two_vars()
 
-    # print("\n###################### test_rtruediv_by_const #####################")
-    # test_rtruediv_by_const()
+    print("\n###################### test_rdiv_by_const #####################")
+    test_rdiv_by_const()
 
     print("\n###################### test_div_mix #####################")
     test_div_mix()
 
-    # print("\n###################### test_ln_op #####################")
-    # test_ln_op()
+    print("\n###################### test_ln_op #####################")
+    test_ln_op()
 
-    # print("\n###################### test_exp_op #####################")
-    # test_exp_op()
+    print("\n###################### test_exp_op #####################")
+    test_exp_op()
 
-    # print("\n###################### test_reduce_sum_op #####################")
-    # test_reduce_sum_op()
+    print("\n###################### test_reduce_sum_op #####################")
+    test_reduce_sum_op()
 
     print("\nPassed all the test!!!")

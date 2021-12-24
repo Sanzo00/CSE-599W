@@ -57,16 +57,16 @@ class Node(object):
 
     def __truediv__(self, other):
         if isinstance(other, Node):
-            new_node = truediv_op(self, other)
+            new_node = div_op(self, other)
         else:
-            new_node = truediv_byconst_op(self, other)
+            new_node = div_byconst_op(self, other)
         return new_node
 
     def __rtruediv__(self, other):
         if isinstance(other, Node):
             raise NotImplementedError # don't happend!
         else:
-            new_node = rtruediv_byconst_op(self, other)
+            new_node = rdiv_byconst_op(self, other)
         return new_node
 
     # Allow left-hand-side add and multiply.
@@ -174,7 +174,7 @@ class MulOp(Op):
     def compute(self, node, input_vals):
         """Given values of two input nodes, return result of element-wise multiplication."""
         """TODO: Your code here"""
-        assert(len(input_vals) == 2)
+        assert len(input_vals) == 2
         return input_vals[0] * input_vals[1]
 
     def gradient(self, node, output_grad):
@@ -211,7 +211,7 @@ class NegOp(Op):
     
     def compute(self, node, input_vals):
         assert(len(input_vals) == 1)
-        return -1 * input_vals[0]
+        return -input_vals[0]
 
     def gradient(self, node, output_grad):
         return [-output_grad]
@@ -262,7 +262,7 @@ class RSubByConstOp(Op):
     def gradient(self, node, output_grad):
         return [-output_grad]
 
-class TruedivOp(Op):
+class DivOp(Op):
     def __call__(self, node_A, node_B):
         new_node = Op.__call__(self)
         new_node.name = "(%s/%s)" % (node_A.name, node_B.name)
@@ -276,7 +276,7 @@ class TruedivOp(Op):
     def gradient(self, node, output_grad):
         return [output_grad / node.inputs[1], -output_grad * node.inputs[0] / (node.inputs[1] * node.inputs[1])]
 
-class TruedivByConstOp(Op):
+class DivByConstOp(Op):
     def __call__(self, node_A, const_val):
         new_node = Op.__call__(self)
         new_node.name = "(%s/%s)" % (node_A.name, str(const_val))
@@ -291,7 +291,7 @@ class TruedivByConstOp(Op):
     def gradient(self, node, output_grad):
         return [output_grad / node.const_attr]
 
-class RTruedivByConstOp(Op):
+class RDivByConstOp(Op):
     def __call__(self, node_A, const_val):
         new_node = Op.__call__(self)
         new_node.name = "(%s/%s)" % (const_val, node_A.name)
@@ -453,9 +453,9 @@ neg_op = NegOp()
 sub_op = SubOp()
 sub_byconst_op = SubByConstOp()
 rsub_byconst_op = RSubByConstOp()
-truediv_op = TruedivOp()
-truediv_byconst_op = TruedivByConstOp()
-rtruediv_byconst_op = RTruedivByConstOp()
+div_op = DivOp()
+div_byconst_op = DivByConstOp()
+rdiv_byconst_op = RDivByConstOp()
 ln_op = LnOp()
 exp_op = ExpOp()
 reduce_sum_op = ReduceSumOp()
