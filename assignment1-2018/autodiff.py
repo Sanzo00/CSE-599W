@@ -274,7 +274,7 @@ class TruedivOp(Op):
         return input_vals[0] / input_vals[1]
     
     def gradient(self, node, output_grad):
-        return [output_grad / node.inputs[1], -node.inputs[0] / node.inputs[1] / node.inputs[1]]
+        return [output_grad / node.inputs[1], -output_grad * node.inputs[0] / (node.inputs[1] * node.inputs[1])]
 
 class TruedivByConstOp(Op):
     def __call__(self, node_A, const_val):
@@ -304,7 +304,7 @@ class RTruedivByConstOp(Op):
         return node.const_attr / input_vals[0]
     
     def gradient(self, node, output_grad):
-        return [-node.const_attr / output_grad / output_grad]
+        return [output_grad * -node.const_attr / (node.inputs[0] * node.inputs[0])]
 
 class LnOp(Op):
     """Op to ln one node."""
