@@ -356,67 +356,67 @@ def test_reduce_sum_op():
     assert np.array_equal(grad_x2_val, np.ones_like(x2_val))
 
 if __name__ == '__main__':
-    # print("\n####################### test_identity #####################")
-    # test_identity()
+    print("\n####################### test_identity #####################")
+    test_identity()
     
-    # print("\n###################### test_add_by_const #####################")
-    # test_add_by_const()
+    print("\n###################### test_add_by_const #####################")
+    test_add_by_const()
 
-    # print("\n###################### test_mul_by_const #####################")
-    # test_mul_by_const()
+    print("\n###################### test_mul_by_const #####################")
+    test_mul_by_const()
 
-    # print("\n###################### test_add_two_vars #####################")
-    # test_add_two_vars()
+    print("\n###################### test_add_two_vars #####################")
+    test_add_two_vars()
 
-    # print("\n###################### test_mul_two_vars #####################")
-    # test_mul_two_vars()
+    print("\n###################### test_mul_two_vars #####################")
+    test_mul_two_vars()
 
-    # print("\n###################### test_add_mul_mix_1 #####################")
-    # test_add_mul_mix_1()
+    print("\n###################### test_add_mul_mix_1 #####################")
+    test_add_mul_mix_1()
 
-    # print("\n###################### test_add_mul_mix_2 #####################")
-    # test_add_mul_mix_2()
+    print("\n###################### test_add_mul_mix_2 #####################")
+    test_add_mul_mix_2()
 
-    # print("\n###################### test_add_mul_mix_3 #####################")
-    # test_add_mul_mix_3()
+    print("\n###################### test_add_mul_mix_3 #####################")
+    test_add_mul_mix_3()
     
-    # print("\n###################### test_grad_of_grad #####################")
-    # test_grad_of_grad()
+    print("\n###################### test_grad_of_grad #####################")
+    test_grad_of_grad()
     
-    # print("\n###################### test_matmul_two_vars #####################")
-    # test_matmul_two_vars()
+    print("\n###################### test_matmul_two_vars #####################")
+    test_matmul_two_vars()
 
-    # print("\n###################### test_neg #####################")
-    # test_neg()
+    print("\n###################### test_neg #####################")
+    test_neg()
 
-    # print("\n###################### test_sub_by_const #####################")
-    # test_sub_by_const()
+    print("\n###################### test_sub_by_const #####################")
+    test_sub_by_const()
 
-    # print("\n###################### test_rsub_by_const #####################")
-    # test_rsub_by_const()
+    print("\n###################### test_rsub_by_const #####################")
+    test_rsub_by_const()
 
-    # print("\n###################### test_sub_two_vars #####################")
-    # test_sub_two_vars()
+    print("\n###################### test_sub_two_vars #####################")
+    test_sub_two_vars()
 
-    # print("\n###################### test_div_by_const #####################")
-    # test_div_by_const()
+    print("\n###################### test_div_by_const #####################")
+    test_div_by_const()
 
-    # print("\n###################### test_div_two_vars #####################")
-    # test_div_two_vars()
+    print("\n###################### test_div_two_vars #####################")
+    test_div_two_vars()
 
-    # print("\n###################### test_rdiv_by_const #####################")
-    # test_rdiv_by_const()
+    print("\n###################### test_rdiv_by_const #####################")
+    test_rdiv_by_const()
 
-    # print("\n###################### test_div_mix #####################")
-    # test_div_mix()
+    print("\n###################### test_div_mix #####################")
+    test_div_mix()
 
-    # print("\n###################### test_ln_op #####################")
-    # test_ln_op()
+    print("\n###################### test_ln_op #####################")
+    test_ln_op()
 
-    # print("\n###################### test_exp_op #####################")
-    # test_exp_op()
+    print("\n###################### test_exp_op #####################")
+    test_exp_op()
 
-    # print("\n###################### test_reduce_sum_op #####################")
-    # test_reduce_sum_op()
+    print("\n###################### test_reduce_sum_op #####################")
+    test_reduce_sum_op()
 
     print("\nPassed all the test!!!")

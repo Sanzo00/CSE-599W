@@ -17,59 +17,59 @@ class Node(object):
                 e.g. self.const_attr=5 if this node is created by x+5.
             self.name: node name for debugging purposes.
         """
-        self.inputs = []
-        self.op = None
-        self.const_attr = None
-        self.name = ""
+        self.inputs = []        # 入边信息
+        self.op = None          # 算子类型
+        self.const_attr = None  # 常量属性
+        self.name = ""          # 名字
 
+    # 节点加法运算
     def __add__(self, other):
         """Adding two nodes return a new node."""
-        if isinstance(other, Node):
-            new_node = add_op(self, other)
+        if isinstance(other, Node):                 # Node + Node
+            new_node = add_op(self, other)          # 为加法运算创建一个新的节点
         else:
-            # Add by a constant stores the constant in the new node's const_attr field.
-            # 'other' argument is a constant
-            new_node = add_byconst_op(self, other)
+            new_node = add_byconst_op(self, other)  # Node + const
         return new_node
 
+    # 节点乘法运算
     def __mul__(self, other):
         """TODO: Your code here"""
         if isinstance(other, Node):
-            new_node = mul_op(self, other)
+            new_node = mul_op(self, other)          # Node * Node 
         else:
-            new_node = mul_byconst_op(self, other)
+            new_node = mul_byconst_op(self, other)  # Node * const 
         return new_node
 
     def __neg__(self):
-        new_node = neg_op(self)
+        new_node = neg_op(self)                     # -Node
         return new_node
 
     def __sub__(self, other):
         if isinstance(other, Node):
-            new_node = sub_op(self, other)
+            new_node = sub_op(self, other)          # Node - Node
         else:
-            new_node = sub_byconst_op(self, other)
+            new_node = sub_byconst_op(self, other)  # Node - const
         return new_node
 
     def __rsub__(self, other):
         if isinstance(other, Node):
             raise NotImplementedError
         else:
-            new_node = rsub_byconst_op(self, other)
+            new_node = rsub_byconst_op(self, other) # const - Node
         return new_node
 
     def __truediv__(self, other):
         if isinstance(other, Node):
-            new_node = div_op(self, other)
+            new_node = div_op(self, other)          # Node / Node
         else:
-            new_node = div_byconst_op(self, other)
+            new_node = div_byconst_op(self, other)  # Node / const 
         return new_node
 
     def __rtruediv__(self, other):
         if isinstance(other, Node):
             raise NotImplementedError # don't happend!
         else:
-            new_node = rdiv_byconst_op(self, other)
+            new_node = rdiv_byconst_op(self, other) # const / Node
         return new_node
 
     # Allow left-hand-side add and multiply.
