@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.14)
+project(cuda-examples LANGUAGES CXX CUDA)
+set(CMAKE_CXX_STANDARD 11)
+include_directories(/usr/local/cuda/include)
+add_executable(main main.cpp vector_add.cu window_sum.cu)
